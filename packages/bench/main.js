@@ -22,6 +22,18 @@ const handlers = [
 		"serverless-react-streamed-ssr-data-on-serverless",
 		process.env.SERVERLESS_REACT_STREAMED_SSR_DATA_ON_SERVERLESS_URL,
 	],
+	[
+		"edge-react-streamed-ssr-data-on-edge-nested",
+		process.env.EDGE_REACT_STREAMED_SSR_DATA_ON_EDGE_NESTED_URL,
+	],
+	[
+		"edge-react-streamed-ssr-data-on-serverless-nested",
+		process.env.EDGE_REACT_STREAMED_SSR_DATA_ON_SERVERLESS_NESTED_URL,
+	],
+	[
+		"serverless-react-streamed-ssr-data-on-serverless-nested",
+		process.env.SERVERLESS_REACT_STREAMED_SSR_DATA_ON_SERVERLESS_NESTED_URL,
+	],
 ].map(([name, url]) => [name, makeHandler(url)]);
 
 const results = {};
@@ -82,6 +94,11 @@ for (const metric of ["headerReceived", "closed"]) {
 			"edge-react-streamed-ssr-data-on-edge",
 			"edge-react-streamed-ssr-data-on-serverless",
 			"serverless-react-streamed-ssr-data-on-serverless",
+		],
+		[
+			"edge-react-streamed-ssr-data-on-edge-nested",
+			"edge-react-streamed-ssr-data-on-serverless-nested",
+			"serverless-react-streamed-ssr-data-on-serverless-nested",
 		],
 	]) {
 		sortLog(
