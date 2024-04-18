@@ -33,24 +33,26 @@ const App = (props) => {
 	);
 };
 
-let data = null;
+let value = null;
 
 /**
  * @param {{ host: string }} props
  */
 const List = (props) => {
-	if (!data) {
-		data = fetch(new URL("/api/data", `https://${props.host}`))
+	if (!value) {
+		value = fetch(new URL("/api/data", `https://${props.host}`))
 			.then((response) => response.json())
 			.then((json) => {
-				data = json;
+				value = json;
 			});
 	}
 
-	if ("then" in data) throw data;
+	if ("then" in value) throw value;
+	const { data } = value;
+	value = null;
 	return (
 		<ul>
-			{data.data.map((id, i) => (
+			{data.map((id, i) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 				<li key={i}>{id}</li>
 			))}
