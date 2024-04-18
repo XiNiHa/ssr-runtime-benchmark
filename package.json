@@ -1,0 +1,11 @@
+{
+	"name": "ssr-runtime-benchmark",
+	"private": true,
+	"packageManager": "pnpm@9.0.2",
+	"scripts": {
+		"check": "biome check ."
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.7.0"
+	}
+}
