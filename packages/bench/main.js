@@ -1,6 +1,6 @@
 import { request } from "undici";
 
-const ITERATIONS = 1000;
+const ITERATIONS = 500;
 
 /**
  * @type {[string, ReturnType<typeof makeHandler>][]}
@@ -8,6 +8,20 @@ const ITERATIONS = 1000;
 const handlers = [
 	["edge-helloworld", process.env.EDGE_HELLOWORLD_URL],
 	["serverless-helloworld", process.env.SERVERLESS_HELLOWORLD_URL],
+	["edge-react-sync-ssr", process.env.EDGE_REACT_SYNC_SSR_URL],
+	["serverless-react-sync-ssr", process.env.SERVERLESS_REACT_SYNC_SSR_URL],
+	[
+		"edge-react-streamed-ssr-data-on-edge",
+		process.env.EDGE_REACT_STREAMED_SSR_DATA_ON_EDGE_URL,
+	],
+	[
+		"edge-react-streamed-ssr-data-on-serverless",
+		process.env.EDGE_REACT_STREAMED_SSR_DATA_ON_SERVERLESS_URL,
+	],
+	[
+		"serverless-react-streamed-ssr-data-on-serverless",
+		process.env.SERVERLESS_REACT_STREAMED_SSR_DATA_ON_SERVERLESS_URL,
+	],
 ].map(([name, url]) => [name, makeHandler(url)]);
 
 const results = {};
@@ -40,9 +54,9 @@ for (const [name, handler] of handlers) {
 		return [
 			key,
 			{
+				avg: values.reduce((acc, value) => acc + value, 0) / values.length,
 				min: values[0],
 				max: values[values.length - 1],
-				avg: values.reduce((acc, value) => acc + value, 0) / values.length,
 				p75: values[Math.ceil(values.length * 0.75) - 1],
 				p99: values[Math.ceil(values.length * 0.99) - 1],
 			},
@@ -59,7 +73,22 @@ for (const [name, handler] of handlers) {
 	results[name] = formatted;
 }
 
-console.log(JSON.stringify(results, null, 2));
+for (const metric of ["headerReceived", "closed"]) {
+	console.log(`\n${metric} comparisons:`);
+	for (const names of [
+		["edge-helloworld", "serverless-helloworld"],
+		["edge-react-sync-ssr", "serverless-react-sync-ssr"],
+		[
+			"edge-react-streamed-ssr-data-on-edge",
+			"edge-react-streamed-ssr-data-on-serverless",
+			"serverless-react-streamed-ssr-data-on-serverless",
+		],
+	]) {
+		sortLog(
+			Object.fromEntries(names.map((name) => [name, results[name][metric]])),
+		);
+	}
+}
 
 /**
  * @param {string} url
@@ -68,10 +97,21 @@ console.log(JSON.stringify(results, null, 2));
 function makeHandler(url) {
 	return async () => {
 		const start = performance.now();
-		const response = await request(url);
+		const response = await request(`${url}/api`);
 		const headerReceived = performance.now() - start;
 		const body = await response.body.text();
 		const total = performance.now() - start;
 		return { headerReceived, closed: total };
 	};
+}
+
+/**
+ * @param {Record<string, Record<"min" | "max" | "avg" | "p75" | "p99", number>>} results
+ * @param {"min" | "max" | "avg" | "p75" | "p99"} sortKey
+ */
+function sortLog(results, sortKey = "avg") {
+	const sorted = Object.entries(results).sort(
+		(a, b) => a[1][sortKey] - b[1][sortKey],
+	);
+	console.table(sorted.map(([name, value]) => ({ name, ...value })));
 }

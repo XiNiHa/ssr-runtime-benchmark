@@ -1,0 +1,24 @@
+diff --git a/dist/index.js b/dist/index.js
+index 785a80ffbed8d39d35fa60392b72bc140fa49130..4893a17a18a8d2665c4f031487c5c83ff5582d8e 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -238,7 +238,8 @@ var vercelOutputServerlessNodeVcConfigSchema = vercelOutputServerlessVcConfigSch
+   launcherType: z2.literal("Nodejs"),
+   shouldAddHelpers: z2.boolean().optional(),
+   shouldAddSourcemapSupport: z2.boolean().optional(),
+-  awsLambdaHandler: z2.string().optional()
++  awsLambdaHandler: z2.string().optional(),
++  supportsResponseStreaming: z2.boolean().optional()
+ }).strict();
+ var vercelOutputVcConfigSchema = z2.union([
+   vercelOutputEdgeVcConfigSchema,
+@@ -463,7 +464,8 @@ async function writeVcConfig(resolvedConfig, destination, edge, filename) {
+           handler: filename,
+           maxDuration: (_a = resolvedConfig.vercel) == null ? void 0 : _a.defaultMaxDuration,
+           launcherType: "Nodejs",
+-          shouldAddHelpers: true
++          shouldAddHelpers: true,
++          supportsResponseStreaming: true
+         }
+       ),
+       void 0,

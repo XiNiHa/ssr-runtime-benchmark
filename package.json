@@ -7,5 +7,10 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.7.0"
+	},
+	"pnpm": {
+		"patchedDependencies": {
+			"vite-plugin-vercel@5.0.5": "patches/vite-plugin-vercel@5.0.5.patch"
+		}
 	}
 }
