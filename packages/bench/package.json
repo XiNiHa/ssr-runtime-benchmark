@@ -1,0 +1,14 @@
+{
+	"name": "bench",
+	"type": "module",
+	"private": true,
+	"version": "1.0.0",
+	"main": "main.js",
+	"scripts": {
+		"bench": "pnpm -r run deploy && pnpm start",
+		"start": "node --env-file=.env.local main.js"
+	},
+	"dependencies": {
+		"undici": "^6.13.0"
+	}
+}
