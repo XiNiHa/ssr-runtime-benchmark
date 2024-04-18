@@ -3,6 +3,7 @@
 	"private": true,
 	"packageManager": "pnpm@9.0.2",
 	"scripts": {
+		"bench": "pnpm --filter bench bench",
 		"check": "biome check ."
 	},
 	"devDependencies": {
